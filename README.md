@@ -1,6 +1,6 @@
-# Kroger Shopping AI Assistant
+# Kroger Shopping AI
 
-An AI-powered shopping assistant that leverages Kroger's Public APIs to help users find products, locate stores, and manage their shopping carts.
+AI-powered Kroger shopping assistant with product search, deals finder, and list management.
 
 ## Features
 
