@@ -4,165 +4,127 @@ AI-powered Kroger shopping assistant with product search, deals finder, and list
 
 ## Features
 
-- 🔍 Product search and recommendations
-- 📍 Store location finder
-- 🛒 Cart management
-- 🏪 Department and chain information
-- 🔐 Secure OAuth2 authentication
+- 🔍 **Smart Product Search** - Search products with pagination and filters
+- 🏪 **Store Locator** - Find nearby Kroger stores by ZIP code
+- 💰 **Deals Finder** - Discover sales and special offers
+- 📝 **Shopping Lists** - Create and manage multiple shopping lists
+- 🛒 **Cart Management** - Add items to cart and track totals
+- 🎨 **Beautiful UI** - Modern React interface with Material-UI
+- 📱 **Responsive Design** - Works on desktop and mobile devices
 
-## Prerequisites
+## Tech Stack
 
-- Node.js 18+ and npm
-- Kroger Developer Account
-- Kroger API credentials (client ID and secret)
+### Frontend
+- React 18 with TypeScript
+- Material-UI (MUI) for components
+- Vite for build tooling
+- Zustand for state management
 
-## Setup
+### Backend
+- FastAPI (Python)
+- Kroger API integration
+- Redis for caching
+- PostgreSQL for data persistence
 
-1. **Clone the repository and install dependencies:**
-   ```bash
-   npm install
-   ```
+### Infrastructure
+- Docker & Docker Compose
+- Environment-based configuration
 
-2. **Configure environment variables:**
-   
-   Copy the `.env.example` file to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+## Quick Start
 
-   Update the `.env` file with your Kroger API credentials:
-   ```
-   KROGER_CLIENT_ID=aishoppingassistant-bbc7t938
-   KROGER_CLIENT_SECRET=your_client_secret_here
-   ```
+### Prerequisites
+- Docker and Docker Compose
+- Kroger API credentials ([Get them here](https://developer.kroger.com))
 
-3. **Build the project:**
-   ```bash
-   npm run build
-   ```
+### Setup
 
-4. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-## API Client Usage
-
-### Initialize the API Client
-
-```typescript
-import { KrogerApi } from './src/api';
-
-const krogerApi = new KrogerApi();
+1. Clone the repository:
+```bash
+git clone https://github.com/boarderframe/kroger-shopping-ai.git
+cd kroger-shopping-ai
 ```
 
-### Search for Products
-
-```typescript
-// Search by term
-const products = await krogerApi.products.searchByTerm('milk', locationId);
-
-// Search by brand
-const brandProducts = await krogerApi.products.searchByBrand('Kroger', locationId);
-
-// Get products available for delivery
-const deliveryProducts = await krogerApi.products.getProductsWithFulfillment(
-  'delivery',
-  locationId,
-  'bread'
-);
+2. Create `.env` file in the root directory:
+```env
+KROGER_CLIENT_ID=your_client_id
+KROGER_CLIENT_SECRET=your_client_secret
 ```
 
-### Find Locations
-
-```typescript
-// Search by ZIP code
-const locations = await krogerApi.locations.searchByZipCode('45202', 10, 20);
-
-// Search by coordinates
-const nearbyStores = await krogerApi.locations.searchByCoordinates(
-  39.1031, // latitude
-  -84.5120, // longitude
-  5 // radius in miles
-);
-
-// Find locations with specific departments
-const storesWithPharmacy = await krogerApi.locations.findLocationsWithDepartments(
-  ['pharmacy', 'gas station'],
-  '45202'
-);
+3. Start the application:
+```bash
+docker-compose up -d --build
 ```
 
-### Manage Shopping Cart
+4. Access the application:
+- Frontend: http://localhost:9100
+- Backend API: http://localhost:9000
+- API Documentation: http://localhost:9000/docs
 
-```typescript
-// Add a single item to cart (requires user authentication)
-await krogerApi.cart.addSingleItem(
-  '0001111041600', // UPC
-  2, // quantity
-  'PICKUP', // modality
-  userAccessToken
-);
+## Development
 
-// Add multiple items
-await krogerApi.cart.addMultipleItems([
-  { upc: '0001111041600', quantity: 2 },
-  { upc: '0001111042713', quantity: 1, modality: 'DELIVERY' }
-], userAccessToken);
+### Running locally without Docker
+
+#### Backend
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 ```
 
-## Available Scripts
-
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build the TypeScript project
-- `npm start` - Run the built application
-- `npm test` - Run tests
-- `npm run lint` - Run ESLint
-- `npm run typecheck` - Run TypeScript type checking
+#### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ## Project Structure
 
 ```
-kroger_shopping_ai/
-├── docs/api/           # API documentation
-├── src/
-│   ├── api/           # Kroger API client modules
-│   ├── config/        # Configuration management
-│   ├── types/         # TypeScript type definitions
-│   ├── services/      # Business logic services
-│   └── utils/         # Utility functions
-├── .env.example       # Environment variables template
-├── package.json       # Project dependencies
-└── tsconfig.json      # TypeScript configuration
+kroger-shopping-ai/
+├── backend/           # FastAPI backend
+│   ├── app/
+│   │   └── main.py   # API endpoints and business logic
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/          # React frontend
+│   ├── src/
+│   │   ├── App.tsx   # Main application component
+│   │   ├── components/
+│   │   ├── services/
+│   │   └── types/
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+└── README.md
 ```
 
-## Rate Limits
+## API Endpoints
 
-Be aware of Kroger API rate limits:
-- Products API: 10,000 calls/day
-- Locations API: 1,600 calls/day per endpoint
-- Cart API: 5,000 calls/day
-- Identity API: 5,000 calls/day
+- `GET /api/locations/nearby` - Find nearby stores
+- `GET /api/products/search` - Search products
+- `GET /api/products/search/all` - Search with aggregation
+- `GET /api/products/sales` - Get sale items
+- `GET /api/cart` - Get cart contents
+- `POST /api/cart/add` - Add item to cart
+- `DELETE /api/cart/remove/{id}` - Remove from cart
 
-## Security Notes
+## Environment Variables
 
-- Never commit your `.env` file or expose your client credentials
-- Use environment variables for all sensitive configuration
-- Implement proper error handling for API failures
-- Cache responses when appropriate to reduce API calls
-
-## Next Steps
-
-1. Implement user authentication flow for cart operations
-2. Add shopping list management features
-3. Create recommendation engine based on user preferences
-4. Build conversational AI interface
-5. Add recipe integration and meal planning
-
-## Support
-
-For Kroger API issues, visit the [Kroger Developer Portal](https://developer.kroger.com/).
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `KROGER_CLIENT_ID` | Kroger API client ID | Yes |
+| `KROGER_CLIENT_SECRET` | Kroger API client secret | Yes |
+| `KROGER_API_BASE_URL` | Kroger API base URL | No (default: https://api.kroger.com/v1) |
 
 ## License
 
-ISC
+MIT
+
+## Contributing
+
+Pull requests are welcome! Please feel free to submit a Pull Request.
+
+## Support
+
+For issues and questions, please use the [GitHub Issues](https://github.com/boarderframe/kroger-shopping-ai/issues) page.
