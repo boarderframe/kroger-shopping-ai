@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Persistence Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h2 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #0052a3;
+        }
+        
+        button.danger {
+            background: #dc3545;
+        }
+        
+        button.danger:hover {
+            background: #c82333;
+        }
+        
+        button.success {
+            background: #28a745;
+        }
+        
+        button.success:hover {
+            background: #218838;
+        }
+        
+        .status-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #ccc;
+            padding-left: 10px;
+        }
+        
+        .log-entry.success {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+        
+        .log-entry.error {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.05);
+        }
+        
+        .log-entry.info {
+            border-color: #17a2b8;
+            background: rgba(23, 162, 184, 0.05);
+        }
+        
+        .log-entry.warning {
+            border-color: #ffc107;
+            background: rgba(255, 193, 7, 0.05);
+        }
+        
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+        }
+        
+        .store-info {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .store-info dt {
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .store-info dd {
+            margin: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Store Persistence Architecture Test</h1>
+    
+    <div class="test-section">
+        <h2>System Status</h2>
+        <div id="systemStatus" class="status-display">Checking system status...</div>
+        <div class="test-controls">
+            <button onclick="checkSystemStatus()">Refresh Status</button>
+            <button onclick="clearLogs()">Clear Logs</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Store Management Tests</h2>
+        
+        <div class="store-info">
+            <dt>Current Store ID:</dt>
+            <dd id="currentStoreId">None</dd>
+            
+            <dt>Store Name:</dt>
+            <dd id="currentStoreName">Not set</dd>
+            
+            <dt>Store Address:</dt>
+            <dd id="currentStoreAddress">Not set</dd>
+            
+            <dt>Last Updated:</dt>
+            <dd id="lastUpdated">Never</dd>
+        </div>
+        
+        <div class="test-controls">
+            <input type="text" id="storeIdInput" placeholder="Store ID (e.g., 12345)">
+            <input type="text" id="storeNameInput" placeholder="Store Name">
+            <button onclick="setTestStore()">Set Store</button>
+            <button onclick="clearStore()" class="danger">Clear Store</button>
+            <button onclick="validateStore()">Validate Store</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Cross-Tab Sync Test</h2>
+        <p>Open this page in another tab to test cross-tab synchronization.</p>
+        <div class="test-controls">
+            <button onclick="broadcastTestMessage()">Broadcast Test Message</button>
+            <button onclick="window.open(location.href, '_blank')">Open New Tab</button>
+        </div>
+        <div id="syncStatus" class="status-display">Waiting for sync events...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Toast Notification Tests</h2>
+        <div class="test-controls">
+            <button onclick="testToast('success')" class="success">Success Toast</button>
+            <button onclick="testToast('error')" class="danger">Error Toast</button>
+            <button onclick="testToast('warning')" style="background: #ffc107;">Warning Toast</button>
+            <button onclick="testToast('info')">Info Toast</button>
+            <button onclick="testToast('loading')">Loading Toast</button>
+            <button onclick="clearToasts()">Clear All</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>LocalStorage Inspector</h2>
+        <div id="storageInspector" class="status-display">Loading...</div>
+        <div class="test-controls">
+            <button onclick="inspectStorage()">Refresh Storage</button>
+            <button onclick="cleanupLegacy()">Cleanup Legacy Keys</button>
+            <button onclick="exportStorage()">Export Storage</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Log</h2>
+        <div id="testLog" class="status-display"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+    
+    <!-- Load the store persistence scripts -->
+    <script src="js/StoreManager.js"></script>
+    <script src="js/ToastManager.js"></script>
+    <script src="js/InitializationManager.js"></script>
+    
+    <script>
+        // Test utilities
+        let testLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = `[${timestamp}] ${message}`;
+            testLog.push({ message: entry, type });
+            
+            const logDiv = document.getElementById('testLog');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = entry;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            
+            console.log(`[Test] ${entry}`);
+        }
+        
+        function clearLogs() {
+            testLog = [];
+            document.getElementById('testLog').innerHTML = '';
+            log('Logs cleared', 'info');
+        }
+        
+        // System status check
+        async function checkSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            let status = 'SYSTEM STATUS REPORT\n';
+            status += '====================\n\n';
+            
+            // Check StoreManager
+            if (window.storeManager) {
+                status += '✅ StoreManager: Loaded\n';
+                status += `   - Initialized: ${window.storeManager.isInitialized}\n`;
+                status += `   - Has Store: ${window.storeManager.hasStore()}\n`;
+                const store = window.storeManager.getStore();
+                if (store) {
+                    status += `   - Store ID: ${store.id}\n`;
+                    status += `   - Store Name: ${store.name}\n`;
+                }
+            } else {
+                status += '❌ StoreManager: Not loaded\n';
+            }
+            
+            status += '\n';
+            
+            // Check ToastManager
+            if (window.toastManager) {
+                status += '✅ ToastManager: Loaded\n';
+                status += `   - Active Toasts: ${window.toastManager.getActiveCount()}\n`;
+            } else {
+                status += '❌ ToastManager: Not loaded\n';
+            }
+            
+            status += '\n';
+            
+            // Check InitializationManager
+            if (window.initManager) {
+                status += '✅ InitializationManager: Loaded\n';
+                status += `   - Initialized: ${window.initManager.initialized}\n`;
+            } else {
+                status += '❌ InitializationManager: Not loaded\n';
+            }
+            
+            status += '\n';
+            
+            // Check localStorage
+            const storeKeys = Object.keys(localStorage).filter(key => 
+                key.includes('kroger') || key.includes('store') || key.includes('Store')
+            );
+            status += `📦 LocalStorage Keys: ${storeKeys.length} store-related keys\n`;
+            storeKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                status += `   - ${key}: ${value ? value.substring(0, 50) : 'null'}...\n`;
+            });
+            
+            statusDiv.textContent = status;
+            log('System status checked', 'success');
+        }
+        
+        // Store management tests
+        async function setTestStore() {
+            const id = document.getElementById('storeIdInput').value || '12345';
+            const name = document.getElementById('storeNameInput').value || 'Test Store';
+            
+            try {
+                const storeData = {
+                    id: id,
+                    locationId: id,
+                    name: name,
+                    address: '123 Test St, Test City, OH 43123',
+                    phone: '(555) 123-4567',
+                    division: 'test-division'
+                };
+                
+                await window.storeManager.setStore(storeData);
+                log(`Store set: ${name} (${id})`, 'success');
+                updateStoreDisplay();
+            } catch (error) {
+                log(`Failed to set store: ${error.message}`, 'error');
+            }
+        }
+        
+        async function clearStore() {
+            try {
+                window.storeManager.clearStore();
+                log('Store cleared', 'success');
+                updateStoreDisplay();
+            } catch (error) {
+                log(`Failed to clear store: ${error.message}`, 'error');
+            }
+        }
+        
+        async function validateStore() {
+            try {
+                const isValid = await window.storeManager.validateStore();
+                log(`Store validation: ${isValid ? 'VALID' : 'INVALID'}`, isValid ? 'success' : 'warning');
+            } catch (error) {
+                log(`Validation error: ${error.message}`, 'error');
+            }
+        }
+        
+        function updateStoreDisplay() {
+            const store = window.storeManager?.getStore();
+            document.getElementById('currentStoreId').textContent = store?.id || 'None';
+            document.getElementById('currentStoreName').textContent = store?.name || 'Not set';
+            document.getElementById('currentStoreAddress').textContent = store?.address || 'Not set';
+            document.getElementById('lastUpdated').textContent = store?.lastUpdated ? 
+                new Date(store.lastUpdated).toLocaleString() : 'Never';
+        }
+        
+        // Cross-tab sync test
+        function broadcastTestMessage() {
+            if (window.storeManager && window.storeManager.syncChannel) {
+                window.storeManager.syncChannel.postMessage({
+                    type: 'test-message',
+                    timestamp: Date.now(),
+                    message: 'Hello from tab!'
+                });
+                log('Test message broadcast', 'info');
+            } else {
+                log('BroadcastChannel not available', 'warning');
+            }
+        }
+        
+        // Toast tests
+        function testToast(type) {
+            const messages = {
+                success: ['Success!', 'Operation completed successfully'],
+                error: ['Error!', 'Something went wrong'],
+                warning: ['Warning!', 'Please check your input'],
+                info: ['Information', 'This is an informational message'],
+                loading: ['Loading...', 'Please wait']
+            };
+            
+            const [title, message] = messages[type];
+            
+            if (type === 'loading') {
+                const id = window.toastManager.showLoading(title, message);
+                setTimeout(() => {
+                    window.toastManager.update(id, {
+                        title: 'Complete!',
+                        message: 'Loading finished',
+                        type: 'success'
+                    });
+                    setTimeout(() => window.toastManager.removeToast(id), 2000);
+                }, 3000);
+            } else {
+                window.toastManager.show(title, message, type);
+            }
+            
+            log(`${type} toast displayed`, 'info');
+        }
+        
+        function clearToasts() {
+            window.toastManager.clear();
+            log('All toasts cleared', 'info');
+        }
+        
+        // Storage inspector
+        function inspectStorage() {
+            const inspector = document.getElementById('storageInspector');
+            let content = 'LOCALSTORAGE CONTENTS\n';
+            content += '=====================\n\n';
+            
+            const allKeys = Object.keys(localStorage).sort();
+            
+            // Group keys by category
+            const categories = {
+                'New Store Keys': [],
+                'Legacy Store Keys': [],
+                'Other Keys': []
+            };
+            
+            allKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                const entry = `${key}: ${value ? value.substring(0, 100) : 'null'}`;
+                
+                if (key.startsWith('kroger_')) {
+                    categories['New Store Keys'].push(entry);
+                } else if (key.includes('Store') || key.includes('store')) {
+                    categories['Legacy Store Keys'].push(entry);
+                } else {
+                    categories['Other Keys'].push(entry);
+                }
+            });
+            
+            Object.entries(categories).forEach(([category, keys]) => {
+                if (keys.length > 0) {
+                    content += `${category} (${keys.length}):\n`;
+                    keys.forEach(key => {
+                        content += `  ${key}\n`;
+                    });
+                    content += '\n';
+                }
+            });
+            
+            inspector.textContent = content;
+            log('Storage inspected', 'info');
+        }
+        
+        function cleanupLegacy() {
+            const legacyKeys = [
+                'defaultStoreId', 'defaultStoreName', 'defaultStoreAddress', 'defaultStorePhone',
+                'selectedStoreId', 'selectedStoreName'
+            ];
+            
+            let cleaned = 0;
+            legacyKeys.forEach(key => {
+                if (localStorage.getItem(key) !== null) {
+                    localStorage.removeItem(key);
+                    cleaned++;
+                }
+            });
+            
+            log(`Cleaned ${cleaned} legacy keys`, 'success');
+            inspectStorage();
+        }
+        
+        function exportStorage() {
+            const data = {};
+            Object.keys(localStorage).forEach(key => {
+                data[key] = localStorage.getItem(key);
+            });
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `storage-export-${Date.now()}.json`;
+            a.click();
+            
+            log('Storage exported', 'success');
+        }
+        
+        // Setup event listeners
+        window.addEventListener('load', async () => {
+            log('Test page loaded', 'info');
+            
+            // Initialize store manager
+            if (window.storeManager) {
+                await window.storeManager.initialize();
+                log('StoreManager initialized', 'success');
+                
+                // Listen for store events
+                window.storeManager.addEventListener('store-changed', (store) => {
+                    log(`Store changed: ${store?.name || 'cleared'}`, 'info');
+                    updateStoreDisplay();
+                });
+                
+                window.storeManager.addEventListener('store-synced', (store) => {
+                    const syncDiv = document.getElementById('syncStatus');
+                    const message = `Store synced from another tab: ${store?.name || 'cleared'}`;
+                    syncDiv.textContent = message;
+                    log(message, 'success');
+                    updateStoreDisplay();
+                });
+            }
+            
+            // Initial status check
+            await checkSystemStatus();
+            updateStoreDisplay();
+            inspectStorage();
+        });
+        
+        // Listen for storage events
+        window.addEventListener('storage', (e) => {
+            if (e.key && e.key.includes('kroger')) {
+                log(`Storage event: ${e.key} changed`, 'info');
+            }
+        });
+    </script>
+</body>
+</html>

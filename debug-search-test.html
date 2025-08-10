@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .error { background: #ffdddd; }
+        .success { background: #ddffdd; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Kroger Shopping AI - Search Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Step 1: Test Backend Connection</h2>
+        <button onclick="testBackend()">Test Backend API</button>
+        <div id="backend-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 2: Find Stores</h2>
+        <button onclick="testStores()">Find Stores (ZIP: 43123)</button>
+        <div id="stores-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Step 3: Test Product Search</h2>
+        <input type="text" id="storeId" placeholder="Store ID (e.g., 01600837)" value="01600837">
+        <input type="text" id="searchTerm" placeholder="Search term" value="milk">
+        <button onclick="testSearch()">Test Search</button>
+        <div id="search-result"></div>
+    </div>
+
+    <script>
+        async function testBackend() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<div class="result">Testing backend connection...</div>';
+            
+            try {
+                const response = await fetch('/api/stores/chains');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✓ Backend is running! Found ${data.length} chains.</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">✗ Backend error: ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">✗ Failed to connect to backend: ${error.message}</div>`;
+            }
+        }
+        
+        async function testStores() {
+            const resultDiv = document.getElementById('stores-result');
+            resultDiv.innerHTML = '<div class="result">Finding stores...</div>';
+            
+            try {
+                const response = await fetch('/api/stores/nearby?zipCode=43123&radius=10');
+                const stores = await response.json();
+                
+                if (response.ok && stores.length > 0) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✓ Found ${stores.length} stores!<br>
+                            First store: ${stores[0].name} (ID: ${stores[0].locationId})
+                            <pre>${JSON.stringify(stores[0], null, 2)}</pre>
+                        </div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">✗ No stores found or error: ${JSON.stringify(stores)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">✗ Failed to find stores: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSearch() {
+            const resultDiv = document.getElementById('search-result');
+            const storeId = document.getElementById('storeId').value;
+            const searchTerm = document.getElementById('searchTerm').value;
+            
+            if (!storeId || !searchTerm) {
+                resultDiv.innerHTML = '<div class="result error">Please enter both store ID and search term</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="result">Searching...</div>';
+            
+            try {
+                console.log('Making search request:', { storeId, searchTerm });
+                
+                const url = `/api/products/search?term=${encodeURIComponent(searchTerm)}&locationId=${storeId}&limit=5`;
+                console.log('Request URL:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    throw new Error(`Invalid JSON response: ${responseText}`);
+                }
+                
+                if (response.ok && data && data.length > 0) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✓ Found ${data.length} products!<br>
+                            First product: ${data[0].name}
+                            <pre>${JSON.stringify(data[0], null, 2)}</pre>
+                        </div>`;
+                } else if (response.ok && data && data.length === 0) {
+                    resultDiv.innerHTML = '<div class="result error">✗ No products found for this search term</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">✗ Search failed: ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                resultDiv.innerHTML = `<div class="result error">✗ Search failed: ${error.message}</div>`;
+            }
+        }
+        
+        // Test backend on page load
+        window.onload = () => {
+            console.log('Debug test page loaded');
+            testBackend();
+        };
+    </script>
+</body>
+</html>

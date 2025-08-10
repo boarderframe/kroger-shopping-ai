@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kroger Shopping AI - Quick Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #0066cc;
+            margin-bottom: 1rem;
+        }
+        
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+        }
+        
+        .test-section h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        
+        .test-link {
+            display: inline-block;
+            background: #0066cc;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            transition: background 0.2s;
+        }
+        
+        .test-link:hover {
+            background: #0052a3;
+        }
+        
+        .instructions {
+            background: #f0f7ff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #0066cc;
+        }
+        
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .checklist li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Kroger Shopping AI - Quick Test Suite</h1>
+        
+        <div class="instructions">
+            <strong>Instructions:</strong> This page helps you quickly test all major UI enhancements. 
+            The main application should be running on one of the servers below.
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Application Access</h3>
+            <div class="status success">✅ Server Status: Applications are running</div>
+            <p><strong>Main Application (Frontend):</strong></p>
+            <a href="http://localhost:8080/public/index.html" class="test-link" target="_blank">
+                Open Main App (Port 8080)
+            </a>
+            
+            <p><strong>API Server (Backend):</strong></p>
+            <a href="http://localhost:3000" class="test-link" target="_blank">
+                Check API Server (Port 3000)
+            </a>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔍 Search & Discovery Tests</h3>
+            <p>Test the enhanced search functionality:</p>
+            <ul class="checklist">
+                <li>Type "milk" in search bar and verify suggestions appear</li>
+                <li>Click search and verify loading skeleton appears</li>
+                <li>Verify results load with product cards</li>
+                <li>Test filter options (brand, on sale, in stock)</li>
+                <li>Test sorting options (price, name, discount)</li>
+                <li>Test grid/table view switching</li>
+                <li>Try recent searches functionality</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🛒 Shopping Cart Tests</h3>
+            <p>Test the advanced cart functionality:</p>
+            <ul class="checklist">
+                <li>Add items to cart from product cards</li>
+                <li>Verify cart count badge updates</li>
+                <li>Open cart tab and verify item display</li>
+                <li>Test quantity +/- controls</li>
+                <li>Test item removal</li>
+                <li>Test promo codes: <code>SAVE10</code>, <code>WELCOME15</code>, <code>FIRST20</code></li>
+                <li>Test delivery option switching</li>
+                <li>Test checkout process (mock)</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>📱 Mobile & Responsive Tests</h3>
+            <p>Test responsive design:</p>
+            <ul class="checklist">
+                <li>Resize browser window to mobile size</li>
+                <li>Verify navigation tabs adapt</li>
+                <li>Verify search bar goes full width</li>
+                <li>Verify product grid reduces columns</li>
+                <li>Test modal on mobile (should stack vertically)</li>
+                <li>Verify touch-friendly button sizes</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Interactive Features Tests</h3>
+            <p>Test advanced interactions:</p>
+            <ul class="checklist">
+                <li>Click product cards to open detailed modal</li>
+                <li>Test modal quantity controls</li>
+                <li>Test modal actions (add to cart, add to list)</li>
+                <li>Close modal with X, outside click, or Escape key</li>
+                <li>Test toast notifications appear for actions</li>
+                <li>Test loading states on buttons</li>
+                <li>Test tab keyboard navigation</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>⚡ Performance Tests</h3>
+            <p>Verify performance features:</p>
+            <ul class="checklist">
+                <li>Open browser DevTools (F12)</li>
+                <li>Go to Network tab and refresh page</li>
+                <li>Verify CSS/JS files load quickly</li>
+                <li>Test search caching (search same term twice)</li>
+                <li>Verify image lazy loading (scroll through results)</li>
+                <li>Check Application tab for Service Worker registration</li>
+                <li>Test offline mode (disconnect network)</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Automated Testing</h3>
+            <p>Run the automated test suite:</p>
+            <div class="status info">
+                📝 <strong>Instructions:</strong>
+                <ol style="margin-top: 1rem;">
+                    <li>Open the main application</li>
+                    <li>Open browser console (F12 → Console tab)</li>
+                    <li>Copy and paste the test script:</li>
+                </ol>
+            </div>
+            <p>
+                <a href="test_verification.js" class="test-link" target="_blank">
+                    📄 Download Test Script
+                </a>
+            </p>
+            <p><strong>Or run directly in console:</strong></p>
+            <code style="display: block; padding: 1rem; margin: 1rem 0;">
+fetch('test_verification.js').then(r=>r.text()).then(eval).then(()=>runUITests())
+            </code>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Test Reports</h3>
+            <p>Review comprehensive test documentation:</p>
+            <a href="UI_TEST_REPORT.md" class="test-link" target="_blank">
+                📋 Detailed Test Report
+            </a>
+            <a href="FINAL_TEST_SUMMARY.md" class="test-link" target="_blank">
+                🎯 Final Test Summary
+            </a>
+            <a href="test_plan.md" class="test-link" target="_blank">
+                📝 Complete Test Plan
+            </a>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚨 Common Issues & Troubleshooting</h3>
+            <h4>If the application doesn't load:</h4>
+            <ul>
+                <li>Check that servers are running on ports 3000 and 8080</li>
+                <li>Try accessing: <code>http://localhost:8080/public/</code></li>
+                <li>Check browser console for errors</li>
+                <li>Ensure all files are in the correct public directory</li>
+            </ul>
+            
+            <h4>If search doesn't work:</h4>
+            <ul>
+                <li>Check that the API server is running on port 3000</li>
+                <li>Verify network requests in DevTools Network tab</li>
+                <li>Check console for JavaScript errors</li>
+            </ul>
+            
+            <h4>If styles look broken:</h4>
+            <ul>
+                <li>Ensure styles.css is loading from the correct path</li>
+                <li>Check for CSS syntax errors in DevTools</li>
+                <li>Verify file permissions on public directory</li>
+            </ul>
+        </div>
+        
+        <div class="status success" style="text-align: center; margin-top: 2rem;">
+            🎉 <strong>Ready to Test!</strong> The Kroger Shopping AI application is ready for comprehensive testing.
+        </div>
+    </div>
+    
+    <script>
+        // Auto-check server status
+        async function checkServerStatus() {
+            const servers = [
+                { name: 'Main App', url: 'http://localhost:8080/public/index.html' },
+                { name: 'API Server', url: 'http://localhost:3000' }
+            ];
+            
+            for (const server of servers) {
+                try {
+                    const response = await fetch(server.url, { method: 'HEAD', mode: 'no-cors' });
+                    console.log(`✅ ${server.name} is responding`);
+                } catch (error) {
+                    console.log(`❌ ${server.name} may not be running`);
+                }
+            }
+        }
+        
+        // Check on page load
+        checkServerStatus();
+        
+        // Add click tracking for test links
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log('🔗 Opening test:', this.textContent.trim());
+            });
+        });
+    </script>
+</body>
+</html>

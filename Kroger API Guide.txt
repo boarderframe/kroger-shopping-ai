@@ -1,0 +1,850 @@
+Skip to content
+Kroger Developers
+Developer Catalog
+Documentation
+Support
+Manage
+Account Options
+ 
+ 
+Search Documentation
+
+Switch to Light mode
+Classic View
+Public APIs
+Getting Started
+Quick Start
+API Basics
+Acceptable Use
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Cart API
+Overview
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Check Your Knowledge
+Check Your Knowledge
+Knowledge Check Answers
+Partner APIs
+Getting Started
+Partnership Request
+API Basics
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Carts API
+Overview
+Tutorial
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Support Resources
+API Troubleshooting
+Common Errors
+Website Help
+Applications
+Organizations
+Teams
+feedback
+Understanding OAuth2
+OAuth2 is an authorization framework that allows for the secure transfer of resources between services using HTTP. OAuth2 is not an API or service offered by any specific entity but is an open standard for authorization that can be implemented by API providers.
+
+This guide covers basic OAuth2 concepts and details about the Kroger implementation.
+
+Roles
+Before diving into the details of OAuth2, it is important to first understand what entities are involved in the implementation of the framework.
+
+The following table provides details about the four "roles" specified by OAuth2.
+
+Roles	
+Resource Owner (Data Owner)	The resource owner is the entity that owns a protected resource. The resource owner can be a customer, an application, or a service depending on what resource is being accessed.
+Client (Application)	The client is the entity requesting the protected resource from the resource owner. The client is generally either a registered application or another service.
+Authorization Server (Kroger API)	The authorization server verifies the identity of the resource owner and authorizes all token requests. The authorization server is represented by the OAuth2 authorization endpoints.
+Resource Server (Kroger API)	The resource server hosts the protected resources. The resource server is represented as API endpoints and is capable of authorizing API requests using the access token.
+OAuth2 Fundamentals
+App Registration
+OAuth2 requires that all applications are registered with the authorization server. The Kroger authorization server uses the information provided during the registration process to authenticate the application and authorize all API requests.
+
+Client Credentials
+All Oauth2 applications are issued "client credentials" in the form of a unique client_id and client_secret after registration. The credentials are used by the Kroger authorization server to authenticate the application.
+
+Your client credentials should be treated the same as a username and password. You should never share your credentials with anyone or store them in a place that can be accessed by anyone but the application owner. If your credentials become compromised, you should delete your application and register for new credentials.
+Scopes
+Kroger uses scopes to authorize access to individual APIs. In general, scopes are a composition of the resource, the shape of the data, and the action, if available. For example, the scope product.full.read gives the application permission to read the full response of the product resource. If an API requires a scope, that scope must be specified as a parameter when making a grant request to access that API.
+
+Kroger assigns the application a set of scopes during the registration process. The application is not authorized to use any scopes outside of those registered to that application. Scopes can be updated during and after registration by request.
+Grant Types
+Grant types are the foundation of OAuth2 authentication. Each grant type has a specific purpose and differ in how the application must implement it.
+
+Kroger supports the following OAuth2 grants:
+
+Grant Type	Purpose	Use when
+Authorization Code	Allows the application to request permission from the customer to make API requests on their behalf, including accessing personal data. When the authorization server authenticates the customer, they are allowing the application the permission determined by the requested scopes.	The application needs to act on behalf of a customer.
+Client Credentials	Allows the application to obtain an access token using the client credentials to authenticate the request.	The application is making a request for general data or data owned by the application.
+Refresh Token	Allows the application to "refresh" an access token that has expired. Refresh tokens are only granted when using the Authorization Code grant type. Using the refresh token eliminates the need to re-authenticate the customer when the access token expires.	The original token from the Authorization Code grant expires.
+Tokens
+After every successful grant, the authorization server issues an access token to the application. Since the access token carries the context of the grant, the token is limited to the requested scopes. Similarly, if the token carries a customer's consent, the token can only access that customer's resources that are within the requested scopes.
+
+OAuth2 specifies two token types:
+
+Access Token: Acts as a form of credentials to authorize API requests. The access token is required in the authorization header by all APIs. Access tokens expire every thirty minutes.
+
+Refresh Token: Acts as a claim to "refresh" an access token. The refresh token does not authorize API requests itself but authorizes the applications claim to a new access token with the same context as the original. Refresh tokens are only issued when using the Authorization Code grant type. Refresh tokens expire every six months and become invalid once they are used.
+
+API Authorization
+As previously stated, APIs authorize requests use the access token in the authorization header. Although the grant implementation may differ, the API authorization process is the same for all APIs.
+
+Provide Feedback
+
+Was this document helpful to you?
+Yes
+No
+Content
+Roles
+OAuth2 Fundamentals
+App Registration
+Client Credentials
+Scopes
+Grant Types
+Tokens
+API Authorization
+Kroger Developers
+Get to Know Us
+About Us
+Contact Us
+Submit Feedback
+Products
+Developer Catalog
+Support
+FAQ
+Technical Support
+Website Help
+The Kroger Co.
+Kroger.com
+About Kroger
+Careers
+All Contents © Copyright 2025 The Kroger Co. All Rights Reserved
+
+Terms and Conditions
+Privacy Policy
+License
+
+
+Skip to content
+Kroger Developers
+Developer Catalog
+Documentation
+Support
+Manage
+Account Options
+ 
+ 
+Search Documentation
+
+Switch to Light mode
+Classic View
+Public APIs
+Getting Started
+Quick Start
+API Basics
+Acceptable Use
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Cart API
+Overview
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Check Your Knowledge
+Check Your Knowledge
+Knowledge Check Answers
+Partner APIs
+Getting Started
+Partnership Request
+API Basics
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Carts API
+Overview
+Tutorial
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Support Resources
+API Troubleshooting
+Common Errors
+Website Help
+Applications
+Organizations
+Teams
+feedback
+Cart API Overview
+The Cart API allows you to add an item to an authenticated customer's cart.
+
+API Reference
+For specific parameters and response data, see the Cart API Reference.
+
+Rate Limit
+The Public Cart API has a 5,000 call per day rate limit.
+
+API Operations
+The Cart API supports the following operations:
+
+Name	Method	Description
+Add to cart	PUT	Allows you to add items to an authenticated customer's cart.
+Provide Feedback
+
+Was this document helpful to you?
+Yes
+No
+Content
+API Reference
+Rate Limit
+API Operations
+Kroger Developers
+Get to Know Us
+About Us
+Contact Us
+Submit Feedback
+Products
+Developer Catalog
+Support
+FAQ
+Technical Support
+Website Help
+The Kroger Co.
+Kroger.com
+About Kroger
+Careers
+All Contents © Copyright 2025 The Kroger Co. All Rights Reserved
+
+Terms and Conditions
+Privacy Policy
+License
+
+Skip to content
+Kroger Developers
+Developer Catalog
+Documentation
+Support
+Manage
+Account Options
+ 
+ 
+Search Documentation
+
+Switch to Light mode
+Classic View
+Public APIs
+Getting Started
+Quick Start
+API Basics
+Acceptable Use
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Cart API
+Overview
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Check Your Knowledge
+Check Your Knowledge
+Knowledge Check Answers
+Partner APIs
+Getting Started
+Partnership Request
+API Basics
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Carts API
+Overview
+Tutorial
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Support Resources
+API Troubleshooting
+Common Errors
+Website Help
+Applications
+Organizations
+Teams
+feedback
+Identity API Overview
+The Identity API allows you to access the profile ID of an authenticated customer.
+
+API Reference
+For specific parameters and response data, see the Identity API Reference.
+
+Rate Limit
+The Public Identity API has a 5,000 call per day rate limit.
+
+API Operations
+The Identity API supports the following operations:
+
+Name	Method	Description
+User profile information	GET	Provides access to the profile Id of an authenticated customer.
+Provide Feedback
+
+Was this document helpful to you?
+Yes
+No
+Content
+API Reference
+Rate Limit
+API Operations
+Kroger Developers
+Get to Know Us
+About Us
+Contact Us
+Submit Feedback
+Products
+Developer Catalog
+Support
+FAQ
+Technical Support
+Website Help
+The Kroger Co.
+Kroger.com
+About Kroger
+Careers
+All Contents © Copyright 2025 The Kroger Co. All Rights Reserved
+
+Terms and Conditions
+Privacy Policy
+License
+Skip to content
+Kroger Developers
+Developer Catalog
+Documentation
+Support
+Manage
+Account Options
+ 
+ 
+Search Documentation
+
+Switch to Light mode
+Classic View
+Public APIs
+Getting Started
+Quick Start
+API Basics
+Acceptable Use
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Cart API
+Overview
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Check Your Knowledge
+Check Your Knowledge
+Knowledge Check Answers
+Partner APIs
+Getting Started
+Partnership Request
+API Basics
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Carts API
+Overview
+Tutorial
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Support Resources
+API Troubleshooting
+Common Errors
+Website Help
+Applications
+Organizations
+Teams
+feedback
+Locations API Overview
+The Locations API provides access to all locations, chains, and departments that are owned by The Kroger Co.
+
+API Reference
+For specific parameters and response data, see the Locations API Reference.
+
+Rate Limit
+The Public Locations API has a 1,600 call a day per endpoint rate limit.
+
+For the Locations API, there are three endpoints that each have a 1,600 call per day rate limit. Since we enforce the rate limit by the number of calls the client makes to the endpoint and not individual operations, you can distribute the 1,600 calls across operations using the same endpoint as you see fit.
+
+Pagination
+The Locations API does not support pagination. The response has a default limit of 9999 results. You can limit the total number of results for the page using the filter.limit parameter (9999 maximum).
+
+Note: The mile radius is set to a 10 mile default. If you extend the number of results using the filter.limit parameter, you may need to extend the mile radius using the filter.radiusInMiles parameter to get the correct number of results.
+
+API Operations
+The Locations API supports the following operations:
+
+Name	Method	Description
+Location list	GET	Returns a list of locations matching a given criteria.
+Location details	GET	Returns the details of a specific location.
+Location query	HEAD	Determines if a specific location exists.
+Chain list	GET	Returns a list of all chains owned by The Kroger Co.
+Chain details	GET	Returns the details of a specific chain.
+Chain query	HEAD	Determines if a specific chain exists.
+Department list	GET	Returns a list of all departments for a specific location.
+Department details	GET	Returns the details of a specific department.
+Department query	HEAD	Determines if a specific department exists.
+Provide Feedback
+
+Was this document helpful to you?
+Yes
+No
+Content
+API Reference
+Rate Limit
+Pagination
+API Operations
+Kroger Developers
+Get to Know Us
+About Us
+Contact Us
+Submit Feedback
+Products
+Developer Catalog
+Support
+FAQ
+Technical Support
+Website Help
+The Kroger Co.
+Kroger.com
+About Kroger
+Careers
+All Contents © Copyright 2025 The Kroger Co. All Rights Reserved
+
+Terms and Conditions
+Privacy Policy
+License
+Skip to content
+Kroger Developers
+Developer Catalog
+Documentation
+Support
+Manage
+Account Options
+ 
+ 
+Search Documentation
+
+Switch to Light mode
+Classic View
+Public APIs
+Getting Started
+Quick Start
+API Basics
+Acceptable Use
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Cart API
+Overview
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Check Your Knowledge
+Check Your Knowledge
+Knowledge Check Answers
+Partner APIs
+Getting Started
+Partnership Request
+API Basics
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Carts API
+Overview
+Tutorial
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Support Resources
+API Troubleshooting
+Common Errors
+Website Help
+Applications
+Organizations
+Teams
+feedback
+Products API Overview
+The Products API allows you to search the Kroger product catalog.
+
+API Reference
+For specific parameters and response data, see the Products API Reference.
+
+Rate Limit
+The Public Products API has a 10,000 call per day rate limit.
+
+For all Public APIs, we enforce the rate limit by the number of calls the client makes to the endpoint, not individual API operations. This means you can distribute the 10,000 calls across all API operations using the /products endpoint as you see fit.
+
+Pagination
+The Product Search operation supports pagination with a default value of 10 results per page. Using the following parameters, you can extend and skip results in the response:
+
+filter.limit - Sets a limit on the number of products returned.
+
+filter.start - Sets a number of results to skip in the response.
+
+Note: Since searching by a term acts as a fuzzy search, the order of the results can change with each new request.
+
+API Operations
+The Products API supports the following operations:
+
+Name	Method	Description
+Product search	GET	Allows you to find products by passing in either a search term or product Id.
+Product details	GET	Returns product details for a specific product.
+Response Data
+Product Page URI
+productPageURI returns the URI portion of the URL required to build the product page URL.
+
+Note: In order to access the product page, you must pre-pend the host name to the URI. Retrieve the host name from the domain value in the Locations API Chains endpoint /v1/chains endpoint. For example, with a domain of kroger.com and a URI of /p/kroger-2-reduced-fat-milk/0001111041600?cid=dis.api.tpi_products-api_20240521_b:all_c:p_t:, you would end up with a URL of 'kroger.com/p/kroger-2-reduced-fat-milk/0001111041600?cid=dis.api.tpi_products-api_20240521_b:all_c:p_t:'
+
+Additional Response Data
+To return the following data from the /products endpoint, you must include a location Id in the request. All operations for the products endpoint accept the filter.locationId query parameter.
+
+Price
+Returns the following price objects:
+
+price - Includes both the regular price of the item and the promo price of the item.
+
+nationalPrice - Includes both the regular national price of the item and the national promo price of the item.
+
+Note: Seasonal products only return a price when available. Some items may not have a national prices available.
+
+Fulfillment Type
+Returns the following boolean objects to indicate an item's fulfillment availability:
+
+instore - The item is sold in store at the given location.
+
+shiptohome - The item is available to be shipped to home.
+
+delivery - The item is available for delivery from the given location.
+
+curbside - The item is available for curbside pickup from the given location.
+
+Note: The instore fulfillment type only indicated that the item is sold by the given location, not that it is in stock.
+
+Aisle Locations
+Returns the aisle locations of the item for the given location.
+
+Inventory
+Returns the stockLevel of the item. This property is omitted when unavailable:
+
+HIGH - The stock level is high.
+
+LOW - The stock level is low.
+
+TEMPORARILY_OUT_OF_STOCK - The item is temporarily out of stock.
+
+Provide Feedback
+
+Was this document helpful to you?
+Yes
+No
+Content
+API Reference
+Rate Limit
+Pagination
+API Operations
+Response Data
+Product Page URI
+Additional Response Data
+Price
+Fulfillment Type
+Aisle Locations
+Inventory
+Kroger Developers
+Get to Know Us
+About Us
+Contact Us
+Submit Feedback
+Products
+Developer Catalog
+Support
+FAQ
+Technical Support
+Website Help
+The Kroger Co.
+Kroger.com
+About Kroger
+Careers
+All Contents © Copyright 2025 The Kroger Co. All Rights Reserved
+
+Terms and Conditions
+Privacy Policy
+License
+Skip to content
+Kroger Developers
+Developer Catalog
+Documentation
+Support
+Manage
+Account Options
+ 
+ 
+Search Documentation
+
+Switch to Light mode
+Classic View
+Public APIs
+Getting Started
+Quick Start
+API Basics
+Acceptable Use
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Cart API
+Overview
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Check Your Knowledge
+Check Your Knowledge
+Knowledge Check Answers
+Partner APIs
+Getting Started
+Partnership Request
+API Basics
+Branding Guidelines
+Postman
+Security
+Understanding OAuth2
+Service to Service Authentication
+Customer Authentication
+Auth Code Tutorial
+Refresh Token Tutorial
+Carts API
+Overview
+Tutorial
+Identity API
+Overview
+Locations API
+Overview
+Tutorial
+Location Search
+Products API
+Overview
+Tutorial
+Product Search
+Support Resources
+API Troubleshooting
+Common Errors
+Website Help
+Applications
+Organizations
+Teams
+feedback
+Check Your Knowledge
+Looking for a fun way to learn about the Kroger Co.'s Public APIs? We've created a Knowledge Check to help you! Once you've completed the activity, you should have a basic understanding of how to authorize for access to the APIs and understand several of the Public APIs available.
+
+Setup
+Complete the following steps before moving onto the knowledge check questions:
+
+Download and install the Postman App. If you'd like to code this challenge directly, skip this step since you won't need Postman.
+Create an account on the Developer Marketplace if you do not already have one. Just click on the "Sign In" link in the upper right and follow the instructions to get your account created.
+Now that you have created an account and logged in, create an application. Creating an application provides the credentials you need to access to the Public APIs, even if you don't yet have an application started. For instructions, visit the Applications help page. When creating your application select the following:
+Environment: Production
+API Products: Check All
+All products selected in Production
+Get the Kroger Co. Public APIs set up with Postman by following these instructions.
+Questions
+These questions are presented in order of difficulty, so don't be surprised if the last one is harder than the first!
+
+For help with these questions, use the following resources:
+
+Kroger Public APIs Specification to learn what the contracts for the available Public APIs are.
+Use, view the tutorials and guides in the other sections of this Public APIs Documentation.
+If you're ready to get started, the questions are as follows:
+
+How many different chains does Kroger have?
+How many locations have a pharmacy and a gas station near the zip code 45202?
+How many Kroger brand milk products are available for ship to home for the following location ID: 01400751?
+Get the aisle and shelf number for Gatorade Frost Thirst Quencher at the Kroger on the Rhine location (zip code 45202).
+Get the name and street address of each location for the zip code 45202?
+Hints
+Are you having problems with the questions? Here are some hints to make your life easier:
+
+General hints:
+What Authorization Grant Type are you using? If you're not using Client Credentials already, give that a try.
+Do you have the correct credentials from your application and the correct scope? Double check those if you're having issues.
+If you expect many results, consider limiting the number of items that can be returned.
+Postman-specific:
+Do you have the correct Postman environment downloaded? Have you updated it with your client credentials?
+Are you sick of counting the number of results in Postman? Think about using Postman test scripts to count these for you.
+Answers
+Are you done with the Knowledge Check or looking for more tips? Take a look at the Knowledge Check Answers for detailed approaches to answer each question and the final answers!
+
+Provide Feedback
+
+Was this document helpful to you?
+Yes
+No
+Content
+Setup
+Questions
+Hints
+Answers
+Kroger Developers
+Get to Know Us
+About Us
+Contact Us
+Submit Feedback
+Products
+Developer Catalog
+Support
+FAQ
+Technical Support
+Website Help
+The Kroger Co.
+Kroger.com
+About Kroger
+Careers
+All Contents © Copyright 2025 The Kroger Co. All Rights Reserved
+
+Terms and Conditions
+Privacy Policy
+License

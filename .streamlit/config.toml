@@ -1,0 +1,73 @@
+[theme]
+# Primary color for interactive elements
+primaryColor = "#0066cc"  # Kroger blue
+
+# Background color for the main content area
+backgroundColor = "#ffffff"
+
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor = "#f8f9fa"
+
+# Color used for almost all text
+textColor = "#333333"
+
+# Font family for all text in the app, except code blocks
+font = "sans serif"
+
+[server]
+# Enable hot reloading
+runOnSave = true
+
+# Maximum size for file uploads (in MB)
+maxUploadSize = 10
+
+# Enable CORS protection
+enableCORS = false
+
+# Enable XSRF protection
+enableXsrfProtection = true
+
+# Port to run the app on
+port = 8501
+
+# Address to bind the server to
+address = "0.0.0.0"
+
+# Whether to send usage statistics to Streamlit
+gatherUsageStats = false
+
+[browser]
+# Internet address where users should point their browsers to connect to the app
+serverAddress = "localhost"
+
+# Port where users should point their browsers to connect to the app
+serverPort = 8501
+
+# Whether to send usage stats to Streamlit
+gatherUsageStats = false
+
+[runner]
+# Allows you to type a variable or string by itself to write it to the app
+magicEnabled = true
+
+# Install a Python tracer to allow you to stop execution into the debugger
+installTracer = false
+
+# Sets the MPLBACKEND environment variable to Agg inside Streamlit to prevent Python crashing
+fixMatplotlib = true
+
+# Run the Python Garbage Collector after each script execution
+postScriptGC = true
+
+[client]
+# Whether to enable st.cache
+caching = true
+
+# If false, makes your Streamlit script not draw a Streamlit app
+displayEnabled = true
+
+# Controls whether uncaught app exceptions are displayed in the browser
+showErrorDetails = true
+
+# Change the visibility of items in the toolbar
+toolbarMode = "auto"

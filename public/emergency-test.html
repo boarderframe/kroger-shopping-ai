@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMERGENCY: Search Function Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .warning { color: orange; font-weight: bold; }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0052a3; }
+        .results {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        pre {
+            background: #333;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚨 EMERGENCY: Search Function Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>1. Backend API Test</h2>
+        <button onclick="testBackendAPI()">Test Backend API</button>
+        <div id="backend-result" class="results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Frontend Integration Test</h2>
+        <button onclick="loadAndTestFrontend()">Load app.js and Test</button>
+        <div id="frontend-result" class="results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Direct Search Simulation</h2>
+        <input type="text" id="test-search" placeholder="Enter search term" value="milk">
+        <button onclick="simulateSearch()">Simulate Search</button>
+        <div id="simulation-result" class="results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. DOM Elements Check</h2>
+        <button onclick="checkDOMElements()">Check Required DOM Elements</button>
+        <div id="dom-result" class="results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Console Output</h2>
+        <pre id="console-output"></pre>
+    </div>
+
+    <!-- Hidden elements that app.js might need -->
+    <div style="display:none">
+        <input id="searchTerm" value="">
+        <div id="searchResults"></div>
+        <div id="searchResultsHeader"></div>
+        <div id="tableResults"></div>
+        <div id="resultsViewControls"></div>
+        <div id="filtersContainer"></div>
+        <div id="quickFilterButtons"></div>
+        <div id="categoryFilters"></div>
+    </div>
+
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const logBuffer = [];
+        
+        function captureConsole() {
+            console.log = function(...args) {
+                originalLog.apply(console, args);
+                logBuffer.push({type: 'log', message: args.join(' ')});
+                updateConsoleOutput();
+            };
+            console.error = function(...args) {
+                originalError.apply(console, args);
+                logBuffer.push({type: 'error', message: args.join(' ')});
+                updateConsoleOutput();
+            };
+            console.warn = function(...args) {
+                originalWarn.apply(console, args);
+                logBuffer.push({type: 'warn', message: args.join(' ')});
+                updateConsoleOutput();
+            };
+        }
+        
+        function updateConsoleOutput() {
+            const output = document.getElementById('console-output');
+            const recent = logBuffer.slice(-20);
+            output.innerHTML = recent.map(log => {
+                const color = log.type === 'error' ? '#f00' : log.type === 'warn' ? '#fa0' : '#0f0';
+                return `<span style="color: ${color}">[${log.type}] ${log.message}</span>`;
+            }).join('\n');
+        }
+        
+        captureConsole();
+
+        // Test 1: Backend API
+        async function testBackendAPI() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = 'Testing backend API...';
+            
+            try {
+                const response = await fetch('/api/products/search?term=milk&locationId=70100154&limit=5');
+                const data = await response.json();
+                
+                if (response.ok && data.length > 0) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✓ Backend API is working!</div>
+                        <div>Found ${data.length} products</div>
+                        ${data.map(p => `
+                            <div class="product-card">
+                                <strong>${p.name}</strong><br>
+                                Brand: ${p.brand}<br>
+                                ID: ${p.id}
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">✗ API returned no data</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">✗ API Error: ${error.message}</div>`;
+            }
+        }
+
+        // Test 2: Load Frontend
+        async function loadAndTestFrontend() {
+            const resultDiv = document.getElementById('frontend-result');
+            resultDiv.innerHTML = 'Loading app.js...';
+            
+            // Set required globals
+            window.selectedStoreId = '70100154';
+            window.selectedStoreName = 'Test Store';
+            
+            const script = document.createElement('script');
+            script.src = '/app.js?t=' + Date.now();
+            
+            script.onload = async () => {
+                resultDiv.innerHTML += '<div class="success">✓ app.js loaded</div>';
+                
+                // Check if searchProducts exists
+                if (typeof window.searchProducts === 'function') {
+                    resultDiv.innerHTML += '<div class="success">✓ searchProducts function found</div>';
+                    
+                    // Try to call it
+                    document.getElementById('searchTerm').value = 'milk';
+                    try {
+                        await window.searchProducts();
+                        resultDiv.innerHTML += '<div class="success">✓ searchProducts executed</div>';
+                        
+                        // Check for results
+                        const searchResults = document.getElementById('searchResults');
+                        if (searchResults && searchResults.innerHTML) {
+                            resultDiv.innerHTML += `<div class="success">✓ Results rendered (${searchResults.innerHTML.length} chars)</div>`;
+                        } else {
+                            resultDiv.innerHTML += '<div class="warning">⚠ No results rendered</div>';
+                        }
+                    } catch (error) {
+                        resultDiv.innerHTML += `<div class="error">✗ searchProducts error: ${error.message}</div>`;
+                    }
+                } else {
+                    resultDiv.innerHTML += '<div class="error">✗ searchProducts function not found</div>';
+                }
+            };
+            
+            script.onerror = () => {
+                resultDiv.innerHTML = '<div class="error">✗ Failed to load app.js</div>';
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        // Test 3: Direct Simulation
+        async function simulateSearch() {
+            const resultDiv = document.getElementById('simulation-result');
+            const searchTerm = document.getElementById('test-search').value;
+            
+            resultDiv.innerHTML = `Searching for "${searchTerm}"...`;
+            
+            // Direct API call
+            try {
+                const response = await fetch(`/api/products/search?term=${encodeURIComponent(searchTerm)}&locationId=70100154&limit=10`);
+                const products = await response.json();
+                
+                if (products.length > 0) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✓ Found ${products.length} products</div>
+                        <div>Now attempting to display using app.js functions...</div>
+                    `;
+                    
+                    // Try to use app.js display functions
+                    if (typeof window.displaySearchResults === 'function') {
+                        window.currentProducts = products;
+                        window.allProducts = [...products];
+                        window.displaySearchResults(products, searchTerm);
+                        resultDiv.innerHTML += '<div class="success">✓ displaySearchResults called</div>';
+                    } else {
+                        resultDiv.innerHTML += '<div class="warning">⚠ displaySearchResults not available</div>';
+                    }
+                    
+                    if (typeof window.displayProducts === 'function') {
+                        window.displayProducts(products);
+                        resultDiv.innerHTML += '<div class="success">✓ displayProducts called</div>';
+                    } else {
+                        resultDiv.innerHTML += '<div class="warning">⚠ displayProducts not available</div>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div class="warning">⚠ No products found</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">✗ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Test 4: Check DOM
+        function checkDOMElements() {
+            const resultDiv = document.getElementById('dom-result');
+            const elements = [
+                'searchTerm',
+                'searchResults',
+                'searchResultsHeader',
+                'tableResults',
+                'resultsViewControls',
+                'filtersContainer',
+                'quickFilterButtons',
+                'categoryFilters'
+            ];
+            
+            let html = '<h3>Required DOM Elements:</h3>';
+            elements.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    html += `<div class="success">✓ #${id} exists</div>`;
+                } else {
+                    html += `<div class="error">✗ #${id} missing</div>`;
+                }
+            });
+            
+            resultDiv.innerHTML = html;
+        }
+
+        // Auto-run backend test on load
+        window.addEventListener('load', () => {
+            testBackendAPI();
+            checkDOMElements();
+        });
+    </script>
+</body>
+</html>

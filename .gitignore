@@ -1,0 +1,75 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+dist-frontend/
+build/
+*.egg-info/
+.eggs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+test-results/
+playwright-report/
+
+# Docker
+*.pid
+
+# Temporary files
+*.tmp
+.temp/
+tmp/
+
+# Cursor/AI specific
+.cursor/
+.claude/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.cache/
+.mypy_cache/
+.ruff_cache/
+
+# Modern app specific
+modern/frontend/node_modules/
+modern/backend/__pycache__/
+modern/frontend/dist/
+modern/backend/*.pyc
+EOF < /dev/null

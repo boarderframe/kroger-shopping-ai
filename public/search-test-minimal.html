@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal Search Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .error { background: #ffdddd; }
+        .success { background: #ddffdd; }
+        button { padding: 10px 20px; margin: 5px; }
+        input { padding: 5px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Minimal Search Test - Direct API Calls</h1>
+    
+    <div>
+        <h3>Current Setup:</h3>
+        <p>Store ID: <span id="storeId">01600341</span></p>
+        <p>API Port: 3000 (or via proxy at 3001)</p>
+    </div>
+    
+    <div>
+        <input type="text" id="searchInput" value="milk" placeholder="Search term">
+        <button onclick="testSearch()">Test Search</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testSearch() {
+            const resultsDiv = document.getElementById('results');
+            const searchTerm = document.getElementById('searchInput').value;
+            const storeId = document.getElementById('storeId').textContent;
+            
+            resultsDiv.innerHTML = '<div class="result">Searching...</div>';
+            
+            try {
+                // First, let's see if we're on port 3000 or 3001
+                const currentPort = window.location.port || '80';
+                console.log('Current port:', currentPort);
+                
+                // Determine the correct API URL based on where we're running
+                let apiUrl;
+                if (currentPort === '3001') {
+                    // We're on Vite dev server, use proxy
+                    apiUrl = `/api/products/search?term=${encodeURIComponent(searchTerm)}&locationId=${storeId}&limit=5`;
+                } else {
+                    // Direct access
+                    apiUrl = `http://localhost:3000/api/products/search?term=${encodeURIComponent(searchTerm)}&locationId=${storeId}&limit=5`;
+                }
+                
+                console.log('API URL:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                const text = await response.text();
+                console.log('Response text:', text);
+                
+                let products;
+                try {
+                    products = JSON.parse(text);
+                } catch (e) {
+                    throw new Error(`Invalid JSON: ${text.substring(0, 100)}...`);
+                }
+                
+                if (response.ok && products && products.length > 0) {
+                    let html = `<div class="result success">Found ${products.length} products!</div>`;
+                    products.forEach(p => {
+                        html += `
+                            <div class="result">
+                                <strong>${p.name}</strong><br>
+                                Brand: ${p.brand}<br>
+                                Size: ${p.size}<br>
+                                Price: ${p.price ? '$' + p.price : 'N/A'}<br>
+                                ${p.salePrice ? `Sale: $${p.salePrice}` : ''}
+                            </div>
+                        `;
+                    });
+                    resultsDiv.innerHTML = html;
+                } else if (response.ok && products && products.length === 0) {
+                    resultsDiv.innerHTML = '<div class="result error">No products found</div>';
+                } else {
+                    resultsDiv.innerHTML = `<div class="result error">Error: ${JSON.stringify(products)}</div>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = `<div class="result error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test on load
+        window.onload = () => {
+            console.log('Page loaded at:', window.location.href);
+            testSearch();
+        };
+    </script>
+</body>
+</html>

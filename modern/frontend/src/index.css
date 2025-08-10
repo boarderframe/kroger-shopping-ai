@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: 79 70 229; /* indigo-600 */
+  --color-surface: 255 255 255;
+  --color-muted: 107 114 128; /* gray-500 */
+}
+
+:root[data-theme='indigo'] {
+  --color-primary: 79 70 229; /* indigo-600 */
+}
+
+:root[data-theme='slate'] {
+  --color-primary: 71 85 105; /* slate-600 */
+}
+
+.layout-stable-scroll {
+  overflow-y: scroll; /* always reserve vertical scrollbar space */
+}
+
+html {
+  scrollbar-gutter: stable; /* modern browsers prevent layout shift */
+}
+
+.btn-primary {
+  @apply rounded-md px-3 py-2 text-white;
+  background-color: rgb(var(--color-primary));
+}
+
+.badge-sale {
+  @apply inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-1;
+  background-color: rgba(var(--color-primary), 0.08);
+  color: rgb(var(--color-primary));
+}
+

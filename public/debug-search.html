@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        button { padding: 10px 20px; margin: 10px 5px; }
+        input { padding: 10px; width: 300px; margin: 10px 0; }
+        #debugOutput { background: #f5f5f5; padding: 15px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Search Function Debug</h1>
+    
+    <div class="debug-section">
+        <h3>Test Search Components</h3>
+        <input type="text" id="testSearchTerm" placeholder="Enter search term" value="milk">
+        <button onclick="debugSearchProducts()">Debug Search</button>
+        <button onclick="testStoreSelection()">Test Store Selection</button>
+        <button onclick="testAPICall()">Test API Call</button>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Current State</h3>
+        <div id="stateInfo"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Debug Output</h3>
+        <div id="debugOutput"></div>
+    </div>
+
+    <script>
+        // Debug version of key variables
+        let selectedStoreId = localStorage.getItem('defaultStoreId') || null;
+        let selectedStoreName = localStorage.getItem('defaultStoreName') || 'None';
+        
+        function log(message, type = 'info') {
+            const output = document.getElementById('debugOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            output.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+        }
+        
+        function updateStateInfo() {
+            const stateInfo = document.getElementById('stateInfo');
+            stateInfo.innerHTML = `
+                <p><strong>Selected Store ID:</strong> ${selectedStoreId || 'None'}</p>
+                <p><strong>Selected Store Name:</strong> ${selectedStoreName}</p>
+                <p><strong>localStorage defaultStoreId:</strong> ${localStorage.getItem('defaultStoreId') || 'None'}</p>
+                <p><strong>localStorage defaultStoreName:</strong> ${localStorage.getItem('defaultStoreName') || 'None'}</p>
+            `;
+        }
+        
+        async function debugSearchProducts() {
+            log('=== DEBUG SEARCH STARTED ===');
+            
+            // Check store selection
+            if (!selectedStoreId) {
+                log('ERROR: No store selected', 'error');
+                return;
+            }
+            
+            // Get search term
+            const searchInput = document.getElementById('testSearchTerm');
+            const searchTerm = searchInput ? searchInput.value.trim() : '';
+            
+            if (!searchTerm) {
+                log('ERROR: No search term provided', 'error');
+                return;
+            }
+            
+            log(`Search term: "${searchTerm}"`);
+            log(`Store ID: ${selectedStoreId}`);
+            
+            // Construct API URL
+            const apiUrl = `/api/products/search?term=${encodeURIComponent(searchTerm)}&locationId=${selectedStoreId}&limit=50`;
+            log(`API URL: ${apiUrl}`);
+            
+            try {
+                log('Making API call...');
+                const response = await fetch(apiUrl);
+                log(`Response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    log(`ERROR: API call failed - ${response.status} ${response.statusText}`, 'error');
+                    return;
+                }
+                
+                const products = await response.json();
+                log(`SUCCESS: Found ${products.length} products`, 'success');
+                log(`First product: ${JSON.stringify(products[0], null, 2)}`);
+                
+            } catch (error) {
+                log(`ERROR: Exception during API call - ${error.message}`, 'error');
+                log(`Error stack: ${error.stack}`, 'error');
+            }
+        }
+        
+        function testStoreSelection() {
+            log('=== TESTING STORE SELECTION ===');
+            
+            // Try to get from localStorage
+            const storedId = localStorage.getItem('defaultStoreId');
+            const storedName = localStorage.getItem('defaultStoreName');
+            
+            log(`localStorage defaultStoreId: ${storedId}`);
+            log(`localStorage defaultStoreName: ${storedName}`);
+            
+            if (storedId) {
+                selectedStoreId = storedId;
+                selectedStoreName = storedName || 'Unknown';
+                log(`Store set: ${selectedStoreId} (${selectedStoreName})`, 'success');
+            } else {
+                log('No default store found in localStorage', 'error');
+            }
+            
+            updateStateInfo();
+        }
+        
+        async function testAPICall() {
+            log('=== TESTING RAW API CALL ===');
+            
+            const testTerm = 'milk';
+            const testStoreId = selectedStoreId || '01400943';  // Default store for testing
+            
+            const apiUrl = `/api/products/search?term=${encodeURIComponent(testTerm)}&locationId=${testStoreId}&limit=10`;
+            log(`Testing URL: ${apiUrl}`);
+            
+            try {
+                const response = await fetch(apiUrl);
+                log(`Response status: ${response.status}`);
+                log(`Response headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                const text = await response.text();
+                log(`Response body (first 500 chars): ${text.substring(0, 500)}`);
+                
+                if (response.ok) {
+                    try {
+                        const products = JSON.parse(text);
+                        log(`Parsed ${products.length} products successfully`, 'success');
+                    } catch (parseError) {
+                        log(`JSON parse error: ${parseError.message}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                log(`Fetch error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            updateStateInfo();
+            testStoreSelection();
+            log('Debug page loaded');
+        };
+    </script>
+</body>
+</html>
